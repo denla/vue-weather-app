@@ -1,0 +1,59 @@
+:root,
+button,
+input {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; */
+
+  --color-fg: #ffffff;
+  --color-main: #000000;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-bg: #222831;
+  --color-card: #272e37;
+  --color-card-hover: #3a434f;
+  --gradient: linear-gradient(135deg, #90d9e0ff 0%, #5460e6 100%);
+}
+
+a {
+  text-decoration: none;
+}
+
+input {
+  padding: 12px;
+  border-radius: 50px;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border: 0;
+  font-size: 15px;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+body {
+  /* margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh; */
+  background: black;
+  /* background: var(--color-bg); */
+  color: var(--color-fg);
+}
