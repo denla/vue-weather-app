@@ -4,7 +4,6 @@ import { ref, watch } from "vue";
 export const useFavouritesStore = defineStore("favourites", () => {
   const currentCity = ref("Москва");
 
-  // Инициализация из localStorage или дефолт
   const favourites = ref(
     JSON.parse(localStorage.getItem("favourites")) || [
       "Москва",
@@ -35,7 +34,6 @@ export const useFavouritesStore = defineStore("favourites", () => {
     currentCity.value = city;
   };
 
-  // Сохраняем изменения в localStorage
   watch(
     favourites,
     (newVal) => {

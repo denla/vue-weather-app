@@ -18,7 +18,7 @@ input {
   --color-main: #000000;
   --color-black: #000000;
   --color-white: #ffffff;
-  --color-bg: #222831;
+  --color-bg: #2f2f2f;
   --color-card: #272e37;
   --color-card-hover: #3a434f;
   --gradient: linear-gradient(135deg, #90d9e0ff 0%, #5460e6 100%);
@@ -47,13 +47,26 @@ input {
   gap: 8px;
 }
 
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 body {
+  margin: 0;
   /* margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh; */
-  background: black;
-  /* background: var(--color-bg); */
+  /* background: black; */
+  background: var(--color-bg);
   color: var(--color-fg);
+}
+
+hr {
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 0;
 }

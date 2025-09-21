@@ -10,17 +10,20 @@ const API_KEY = "d9dd4da512dc4dba90e205951251509";
 import CityForecastItem from "../components/Items/CityForecastItem.vue";
 import { useFavouritesStore } from "../stores/favourites";
 import router from "../router";
+import SearchResultItem from "../components/Items/SearchResultItem.vue";
+
+import { Search } from "lucide-vue-next";
+import CityForecastItemLoader from "../components/Skeletons/CityForecastItemLoader.vue";
 
 const cities = useFavouritesStore();
 
 // const cities = ["Москва", "Санкт-Петербург", "Нижний Новгород", "Лондон"];
 
-// сюда будем складывать данные по каждому городу
 const forecasts = ref([]);
 const loading = ref(false);
 
-const searchQuery = ref(""); // строка поиска
-const suggestions = ref([]); // подсказки
+const searchQuery = ref("");
+const suggestions = ref([]);
 // const favorites = useFavouritesStore();
 
 const fetchSuggestions = async () => {
@@ -59,7 +62,7 @@ const fetchForecasts = async () => {
 
 const goToCity = (city) => {
   cities.changeCurrentCity(city);
-  router.push("/"); // Перенаправляем на главную
+  router.push("/");
 };
 
 onMounted(fetchForecasts);
@@ -71,14 +74,28 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM, HH:mm");
   <div class="favourites">
     <h1>Избранные города</h1>
 
-    <div v-if="loading">Загружаем...</div>
-    <div v-else>
+    <div class="search-box">
+      <Search class="search-icon" :size="18" />
       <input
+        type="text"
+        placeholder="Найти город"
+        v-model="searchQuery"
+        @input="fetchSuggestions"
+      />
+    </div>
+
+    <div v-if="loading">
+      <div class="cities-list">
+        <CityForecastItemLoader /><CityForecastItemLoader /><CityForecastItemLoader />
+      </div>
+    </div>
+    <div v-else>
+      <!-- <input
         type="text"
         placeholder="Добавить город"
         v-model="searchQuery"
         @input="fetchSuggestions"
-      />
+      /> -->
 
       <div v-if="!suggestions.length">
         <div class="cities-list">
@@ -90,16 +107,24 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM, HH:mm");
         </div>
       </div>
 
-      <ul v-else class="suggestions">
-        <li
+      <div v-else class="suggestions">
+        <!-- <li
           v-for="s in suggestions"
           :key="s.id"
           @click="goToCity(s.name)"
           class="suggestion-item"
         >
           {{ s.name }} <span v-if="s.country">({{ s.country }})</span>
-        </li>
-      </ul>
+        </li> -->
+
+        <SearchResultItem
+          v-for="s in suggestions"
+          :key="s.id"
+          :handle-click="goToCity"
+          :name="s.name"
+          :country="s.country"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -110,7 +135,7 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM, HH:mm");
 }
 .cities-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -125,6 +150,18 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM, HH:mm");
   justify-content: space-between;
   font-size: 14px;
 }
+@media screen and (max-width: 1080px) {
+  .cities-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 880px) {
+  .cities-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .cities-list__item-name {
   font-size: 24px;
   font-weight: 500;
@@ -145,17 +182,39 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM, HH:mm");
   margin: 12px 0;
   padding: 0;
   list-style: none;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   border-radius: 8px;
   /* background: white; */
 }
 
-.suggestion-item {
-  padding: 8px 12px;
-  cursor: pointer;
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.suggestion-item:hover {
-  background: #f0f0f0;
+.search-icon {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.6);
+  left: 16px;
+  top: 12px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 12px 12px 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+}
+
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.search-box input:focus {
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>

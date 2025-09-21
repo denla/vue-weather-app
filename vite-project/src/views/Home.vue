@@ -2,6 +2,8 @@
 import { Cloud, Heart } from "lucide-vue-next";
 import HourlyForecastItem from "../components/Items/HourlyForecastItem.vue";
 import { RouterLink, RouterView } from "vue-router";
+import UvIndex from "../components/Items/UvIndex.vue";
+import Sidebar from "../components/Sidebar/Sidebar.vue";
 
 import { ref, onMounted } from "vue";
 import axios from "axios";
@@ -73,67 +75,136 @@ const backgroundStyle = computed(() => {
 
 <template>
   <div v-if="!forecast">Loading...</div>
-  <div v-else class="content" :style="backgroundStyle">
-    <div class="top">
-      <div class="top__header">
-        <div class="top__title">{{ forecast.location.name }}</div>
-        <div class="top__subtitle">
-          Обновлено {{ formatDate(forecast.current.last_updated) }}
-        </div>
-        <Button type="secondary" @click="store.toggleFavourite(city)">
-          <!-- <button @click="store.toggleFavourite(city)"> -->
-          <Heart :size="16" />
-          <div v-if="store.favourites.includes(city)">
-            Удалить из избранного
+  <div v-else class="main" :style="backgroundStyle">
+    <Sidebar />
+    <div class="content">
+      <div class="top">
+        <div class="top__header">
+          <div class="flex-col">
+            <div class="top__title">{{ forecast.location.name }}</div>
+            <div class="top__subtitle">
+              Обновлено {{ formatDate(forecast.current.last_updated) }}
+            </div>
           </div>
-          <div v-else>В избранное</div>
-        </Button>
+          <Button type="secondary" @click="store.toggleFavourite(city)">
+            <!-- <button @click="store.toggleFavourite(city)"> -->
+            <Heart :size="16" />
+            <div v-if="store.favourites.includes(city)">
+              Удалить из избранного
+            </div>
+            <div v-else>В избранное</div>
+          </Button>
 
-        <!-- </button> -->
+          <!-- </button> -->
+        </div>
+
+        <div class="top__info">
+          <div class="top__temp">
+            {{ Math.round(forecast.current.temp_c) }} °C
+          </div>
+          <div class="top__condition">
+            {{ forecast.current.condition.text
+            }}<span class="top__feelslike"
+              >Ощущается как
+              {{ Math.round(forecast.current.feelslike_c) }} °C</span
+            >
+          </div>
+        </div>
       </div>
 
-      <div class="top__info">
-        <div class="top__temp">
-          {{ Math.round(forecast.current.temp_c) }} °C
-        </div>
-        <div class="top__condition">
-          {{ forecast.current.condition.text
-          }}<span class="top__feelslike"
-            >Ощущается как
-            {{ Math.round(forecast.current.feelslike_c) }} °C</span
-          >
+      <div class="forecast-hourly">
+        <div class="forecast-hourly__title">Почасовой прогноз</div>
+
+        <div class="forecast-hourly__list">
+          <HourlyForecastItem
+            :time="hour.time.split(' ')[1]"
+            :condition="hour.condition.text"
+            :temp="hour.temp_c"
+            v-for="hour in forecast.forecast.forecastday[0].hour"
+            :key="hour.time"
+          />
         </div>
       </div>
-    </div>
 
-    <div class="forecast-hourly">
-      <div class="forecast-hourly__title">Почасовой прогноз</div>
-
-      <div class="forecast-hourly__list">
-        <HourlyForecastItem
-          :time="hour.time.split(' ')[1]"
-          :condition="hour.condition.text"
-          :temp="hour.temp_c"
-          v-for="hour in forecast.forecast.forecastday[0].hour"
-          :key="hour.time"
+      <div class="forecast-daily">
+        <DailyForecastItem
+          v-for="day in forecast.forecast.forecastday"
+          :key="day.date"
+          :day="day.date"
+          :condition="day.day.condition.text"
+          :temp_max="day.day.maxtemp_c"
+          :temp_min="day.day.mintemp_c"
         />
       </div>
-    </div>
 
-    <div class="forecast-daily">
-      <DailyForecastItem
-        v-for="day in forecast.forecast.forecastday"
-        :key="day.date"
-        :day="day.date"
-        :condition="day.day.condition.text"
-        :temp_max="day.day.maxtemp_c"
-        :temp_min="day.day.mintemp_c"
-      />
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="info-card__title">Влажность</div>
+          <div class="info-card__number">{{ forecast.current.humidity }}%</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card__title">Скорость ветра</div>
+          <div class="flex-col">
+            <div class="info-card__number">
+              {{ forecast.current.wind_kph }} км/ч
+            </div>
+            <div>Направление: {{ forecast.current.wind_dir }}</div>
+          </div>
+        </div>
+        <!-- <UvIndex :uv="forecast.current.uv ?? 0" /> -->
+
+        <div class="info-card">
+          <div class="info-card__title">УФ-индекс</div>
+          <div class="flex-col">
+            <div class="info-card__number">{{ forecast.current.uv }}</div>
+            <div>Cреднее значение</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card__title">Осадки</div>
+          <div class="info-card__number">
+            {{ forecast.current.precip_mm }} мм
+          </div>
+          <!-- <div>Cреднее значение</div> -->
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.content {
+  width: 100%;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.info-cards {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  padding-top: 0;
+}
+.info-card {
+  border-radius: 16px;
+  background: #0000001a;
+  width: fit-content;
+  /* margin: 20px; */
+  aspect-ratio: 1 / 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  /* max-width: 220px; */
+}
+.info-card__title {
+  opacity: 0.6;
+}
+.info-card__number {
+  font-size: 42px;
+}
 /* button {
   padding: 12px 20px;
   border-radius: 50px;
@@ -165,8 +236,9 @@ const backgroundStyle = computed(() => {
   flex-direction: row;
 } */
 
-.content {
-  overflow-y: auto;
+.main {
+  display: flex;
+  flex-direction: row;
   background: linear-gradient(180deg, #3c7fc5, #a1cceb);
 }
 
@@ -213,7 +285,8 @@ const backgroundStyle = computed(() => {
   flex-direction: column;
   margin: 20px;
   border-radius: 16px;
-  background: #0000001a;
+  /* background: #0000001a; */
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 .forecast-hourly__title {
   padding: 20px;
@@ -234,7 +307,8 @@ const backgroundStyle = computed(() => {
   display: flex;
   flex-direction: column;
   margin: 20px;
-  background: #0000001a;
+  /* background: #0000001a; */
+  background: rgba(255, 255, 255, 0.15) !important;
   border-radius: 16px;
 }
 

@@ -11,14 +11,13 @@ import { computed } from "vue";
 const router = useRouter();
 const favourites = useFavouritesStore();
 
-// тут сохраняем props в переменную
 const props = defineProps({
   data: Object,
 });
 
 const goToCity = (city) => {
   favourites.changeCurrentCity(city);
-  router.push("/"); // Перенаправляем на главную
+  router.push("/");
 };
 
 const conditionBackgrounds = {
@@ -82,7 +81,7 @@ const backgroundStyle = computed(() => {
   width: 100%;
   box-sizing: border-box;
   height: 140px;
-  color: white; /* чтобы текст не терялся */
+  color: white;
   cursor: pointer;
   transition: transform 0.2s ease;
 }

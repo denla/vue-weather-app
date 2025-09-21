@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Favorites from "../views/Favorites.vue";
 import Home from "../views/Home.vue";
-import Search from "../views/Search.vue";
+import Favorites from "../views/Favorites.vue";
+import MainLayout from "../layouts/MainLayout.vue";
 
 const routes = [
   {
@@ -11,13 +11,14 @@ const routes = [
   },
   {
     path: "/favorites",
-    name: "Favorites",
-    component: Favorites,
-  },
-  {
-    path: "/search",
-    name: "Search",
-    component: Search,
+    component: MainLayout,
+    children: [
+      {
+        path: "",
+        name: "Favorites",
+        component: Favorites,
+      },
+    ],
   },
 ];
 

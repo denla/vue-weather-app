@@ -38,7 +38,7 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM");
 
     <div class="forecast-daily__condition">
       <component :is="conditionIcons[condition]" :size="20" />
-      <div class="forecast-daily__icon">{{ condition }}</div>
+      <div class="forecast-daily__text">{{ condition }}</div>
     </div>
 
     <div class="forecast-daily__temp">
@@ -56,6 +56,13 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM");
   justify-content: space-between;
   padding: 20px;
   border-bottom: 1px solid #ffffff3b;
+  white-space: nowrap;
+}
+
+.forecast-daily__text {
+  min-width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .forecast-daily__temp {
@@ -71,6 +78,11 @@ const formatDate = (dateStr) => dayjs(dateStr).format("D MMMM");
   display: flex;
   flex-direction: row;
   gap: 8px;
-  width: 30%;
+  width: 33%;
+  white-space: nowrap;
+}
+
+.forecast-daily__condition svg {
+  flex-shrink: 0;
 }
 </style>

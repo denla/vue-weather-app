@@ -54,5 +54,8 @@ button {
   /* background: white; */
   display: flex;
   gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  height: fit-content;
 }
 </style>
